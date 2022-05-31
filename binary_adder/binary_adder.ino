@@ -11,15 +11,18 @@
 
 
 // Pins of the first number
-const uint8_t aPins[] {2, 3, 4, 5};
+const int aPins[] {2, 3, 4, 5};
 
 // Pins of the second number
-const uint8_t bPins[] {7, 8, 9, 10};
+const int bPins[] {7, 8, 9, 10};
 
 
 // Entry point
 void setup()
 {
+  Serial.begin(9600);     // Important!!!!!!
+
+
   // Pin Setup 
   for (uint8_t pin : aPins)
     pinMode(pin, OUTPUT);
@@ -30,39 +33,58 @@ void setup()
   pinMode(6, OUTPUT);     // Important!!!!!!
   digitalWrite(6, LOW);
 
+  Serial.println("Setup complete");
+}
 
-  // Main Code
 
-  // Get first number via serial monitor
+void loop() 
+{
+  /* First number */
+  
+  // Get input via serial monitor
   Serial.println("Bitte geben Sie den ersten Summanden ein: ");
   while (Serial.available() == 0) { /* Wait for input */ }
   uint8_t val1 = Serial.parseInt();
 
-  // Get second number
+  // Conversion to binary representation
+  int* a = decimalToBinary(val1);
+
+  // Write to Pins
+  simBinaryInput(a, aPins);
+
+  // Refresh Serial
+  Serial.end();
+  Serial.begin(9600);
+
+
+
+  /* Second number */
+
+  // Get input
   Serial.println("Geben Sie den zweiten Summanden ein: ");
   while (Serial.available() == 0) { /* Wait for input */ }
   uint8_t val2 = Serial.parseInt();
 
   // Conversion to binary representation
-  uint8_t* a = decimalToBinary(val1);
-  uint8_t* b = decimalToBinary(val2);
+  int* b = decimalToBinary(val2);
 
-  // Write to pins
-  simBinaryInput(a, aPins);
-  simBinaryInput(b, bPins);
+  // Write to Pins
+  simBinaryInput(b, bPins);   // Write to pins
 
-  Serial.println("Programm exited successfully");
+  // Refresh Serial
+  Serial.end();
+  Serial.begin(9600);
 }
 
 
 // decimalToBinary
-uint8_t* decimalToBinary(uint8_t n)
+int* decimalToBinary(int n)
 {
   // Convert decimal number to its binary representation
 
-  static uint8_t output[4];
-  for (uint8_t i=3; i>=0; i--) {
-    uint8_t digit = n%2 == 0? 0: 1;
+  static int output[4];
+  for (int i=3; i>=0; i--) {
+    int digit = n%2 == 0? 0: 1;
     output[i] = digit;
     n /= 2;
   }
@@ -72,11 +94,11 @@ uint8_t* decimalToBinary(uint8_t n)
 
 
 // simBinaryInput
-void simBinaryInput(uint8_t nb[4], const uint8_t inputs[4])
+void simBinaryInput(int nb[4], const int inputs[4])
 {
   // Write binary number to pins
 
-  for (uint8_t i=0; i<4; i++)
+  for (int i=0; i<4; i++)
     digitalWrite(inputs[i], nb[i]);
 
 }
