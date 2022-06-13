@@ -66,10 +66,13 @@ void loop()
   // Read from input pins
   uint8_t binaryReads[4];
 
-  for (uint8_t i=0; i<4; i++)
+  for (uint8_t i=0; i<4; i++) {
     binaryReads[i] = convertAnalogToDigital(
       analogRead(analogInputPins[i])
     );
+    Serial.print(binaryReads[i]);
+  }
+  Serial.println();
 
   // Convert to hexadecimal
   uint8_t decimalInput = binaryToDecimal(binaryReads);
@@ -77,7 +80,7 @@ void loop()
   // Write result to sevensegment display
   showNumber(decimalInput);
 
-  delay(100);  // Just to be safe..
+  delay(300);  // Just in case..
 }
 
 
@@ -86,8 +89,7 @@ void showNumberOnSevensegment(
   const uint8_t outputPins[], 
   uint8_t len, 
   uint8_t n
-)
-{
+) {
   for (uint8_t i; i<len; i++)
     digitalWrite(outputPins[i], graphics_buffer[n][i]);
 }
@@ -101,9 +103,9 @@ void showNumber(uint8_t n)
 
 
 // convertAnalogToDigital
-uint8_t convertAnalogToDigital(uint8_t analogInput)
+uint8_t convertAnalogToDigital(int analogInput)
 {
-  return (uint8_t)analogInput > 256;
+  return analogInput > 256;
 
   /* // Short for:
    * if (analogInput > 256)
@@ -118,7 +120,7 @@ uint8_t binaryToDecimal(uint8_t binaryInput[])
 {
   uint8_t decimalOutput = 0;
 
-  for (uint8_t i = 0 ; i < 4 ; i++)
+  for (uint8_t i=0; i<4; i++)
     decimalOutput = (decimalOutput << 1) + binaryInput[i];
 
   return decimalOutput;

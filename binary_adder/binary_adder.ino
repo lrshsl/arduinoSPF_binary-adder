@@ -11,17 +11,16 @@
 
 
 // Pins of the first number
-const int aPins[] {2, 3, 4, 5};
+const uint8_t aPins[] {2, 3, 4, 5};
 
 // Pins of the second number
-const int bPins[] {7, 8, 9, 10};
+const uint8_t bPins[] {7, 8, 9, 10};
 
 
 // Entry point
 void setup()
 {
   Serial.begin(9600);     // Important!!!!!!
-
 
   // Pin Setup 
   for (uint8_t pin : aPins)
@@ -42,17 +41,17 @@ void loop()
   /* First number */
   
   // Get input via serial monitor
-  Serial.println("Bitte geben Sie den ersten Summanden ein: ");
-  while (Serial.available() == 0) { /* Wait for input */ }
+  Serial.println("Geben Sie den ersten Summanden ein: ");
+  while (!Serial.available()) { /* Wait for input */ }
   uint8_t val1 = Serial.parseInt();
 
   // Conversion to binary representation
-  int* a = decimalToBinary(val1);
+  uint8_t* a = decimalToBinary(val1);
 
   // Write to Pins
   simBinaryInput(a, aPins);
 
-  // Refresh Serial
+  // 'Refresh' Serial (/kill and revive)
   Serial.end();
   Serial.begin(9600);
 
@@ -66,25 +65,25 @@ void loop()
   uint8_t val2 = Serial.parseInt();
 
   // Conversion to binary representation
-  int* b = decimalToBinary(val2);
+  uint8_t* b = decimalToBinary(val2);
 
   // Write to Pins
-  simBinaryInput(b, bPins);   // Write to pins
+  simBinaryInput(b, bPins);
 
-  // Refresh Serial
+  // 'Refresh' Serial (/ kill and revive)
   Serial.end();
   Serial.begin(9600);
 }
 
 
 // decimalToBinary
-int* decimalToBinary(int n)
+uint8_t* decimalToBinary(uint8_t n)
 {
   // Convert decimal number to its binary representation
 
-  static int output[4];
-  for (int i=3; i>=0; i--) {
-    int digit = n%2 == 0? 0: 1;
+  static uint8_t output[4];
+  for (int i=3; i>=0; i--) {  // NOT uint8!!
+    uint8_t digit = n%2 == 0? 0: 1;
     output[i] = digit;
     n /= 2;
   }
@@ -94,11 +93,11 @@ int* decimalToBinary(int n)
 
 
 // simBinaryInput
-void simBinaryInput(int nb[4], const int inputs[4])
+void simBinaryInput(uint8_t nb[4], const uint8_t inputs[4])
 {
   // Write binary number to pins
 
-  for (int i=0; i<4; i++)
+  for (uint8_t i=0; i<4; i++)
     digitalWrite(inputs[i], nb[i]);
 
 }
